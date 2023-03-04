@@ -25,10 +25,8 @@ private Connection connection;
 		
 		java.sql.Date sqlDate = new java.sql.Date(obj.getOrderDate().getTime());
 		
-		String strCreate = "INSERT INTO T_Orders (Date, Amount, IdUser, listArticles) VALUES (?,?,?,?);";
+		String strCreate = "INSERT INTO T_Orders (Date, TotalAmount, IdUser, ListArticles) VALUES (?,?,?,?);";
 		try (PreparedStatement ps = connection.prepareStatement(strCreate, Statement.RETURN_GENERATED_KEYS)){  
-			
-			
 			
 			ps.setDate(1, sqlDate);
 			ps.setDouble(2, obj.getTotalAmount());
@@ -43,7 +41,7 @@ private Connection connection;
 			}
 				
 		} catch (SQLException e) {	
-			throw new RuntimeException("Erreur lors de l'insertion de l'utilisateur en bdd:\n" + e.getMessage());
+			throw new RuntimeException("Erreur lors de l'insertion de la commande en bdd:\n" + e.getMessage());
 		}
 		return 0;
 	}
@@ -78,7 +76,7 @@ private Connection connection;
 					Date rsDate = resultSet.getDate(2);
 					double rsTotalAmount = resultSet.getDouble(3);
 					int rsIdUser = resultSet.getInt(4);
-					String rsListArticles = resultSet.getString(4);
+					String rsListArticles = resultSet.getString(5);
 					
 				    
 				    ArrayList<Integer> listArticles = new ArrayList<>();
@@ -93,14 +91,14 @@ private Connection connection;
 				}
 			}
 		} catch(SQLException e) {
-			throw new RuntimeException("Erreur lors de la récupération de l'ensemble des utilisateurs:\n" + e.getMessage());
+			throw new RuntimeException("Erreur lors de la récupération de l'ensemble des commandes:\n" + e.getMessage());
 		}
 		return orders;
 	}
 
 	public ArrayList<Order> readAll(int userId) {
 		ArrayList<Order> orders = new ArrayList<>();
-		String strSql = "SELECT * FROM T_Orders where UserId=" + userId +";";
+		String strSql = "SELECT * FROM T_Orders where IdUser=" + userId +";";
 
 		try(Statement statement = connection.createStatement ()){
 			try(ResultSet resultSet = statement.executeQuery(strSql)) {
@@ -109,7 +107,7 @@ private Connection connection;
 					Date rsDate = resultSet.getDate(2);
 					double rsTotalAmount = resultSet.getDouble(3);
 					int rsIdUser = resultSet.getInt(4);
-					String rsListArticles = resultSet.getString(4);
+					String rsListArticles = resultSet.getString(5);
 					
 				    
 				    ArrayList<Integer> listArticles = new ArrayList<>();
@@ -124,7 +122,7 @@ private Connection connection;
 				}
 			}
 		} catch(SQLException e) {
-			throw new RuntimeException("Erreur lors de la récupération de l'ensemble des utilisateurs:\n" + e.getMessage());
+			throw new RuntimeException("Erreur lors de la récupération de l'ensemble de vos commandes:\n" + e.getMessage());
 		}
 		return orders;
 	}

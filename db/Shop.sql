@@ -4,7 +4,7 @@ DROP DATABASE IF EXISTS Shop;
 CREATE DATABASE Shop;
 USE Shop;
 
-CREATE TABLE T_Articles (
+CREATE TABLE t_articles (
 IdArticle int(4) PRIMARY KEY AUTO_INCREMENT,
 Description varchar(30) NOT NULL,
 Brand varchar(30) NOT NULL,
@@ -80,33 +80,35 @@ alter table t_articles add foreign key (IdCategory) References T_Categories(IdCa
 
 select * from t_articles;
 
+update t_articles set IdCategory=2;
+update t_articles set IdCategory=1 where Description like '%systeme%' or Description like '%office%';
 update t_articles set IdCategory=3 where Description like '%iphone%' or Description like '%galaxy%';
 
 select * from t_articles;
 
 select IdArticle, t_articles.Description,Brand,UnitaryPrice, catname  from t_articles inner join t_categories on t_articles.idcategory=t_categories.idcategory order by UnitaryPrice;
 
-CREATE
-TABLE T_Users (
+CREATE TABLE T_Users (
 IdUser int(4) PRIMARY KEY AUTO_INCREMENT,
 Login varchar(20) NOT NULL,
-Password varchar(20) NOT NULL
+Password varchar(20) NOT NULL,
+Basket varchar(20000) NOT NULL,
+Orders varchar(20000) NOT NULL
 ) ENGINE = InnoDB;
 
 DESCRIBE T_Users;
 
 select * from t_users;
 
-INSERT INTO T_Users ( Login, Password ) VALUES ('robert@gmail.com', 'robertlebogossdu64');
-INSERT INTO T_Users ( Login, Password ) VALUES ('julie@gmail.com', 'joliejulie40');
+INSERT INTO T_Users ( Login, Password, Basket, Orders ) VALUES ('robert@gmail.com', 'robertlebogossdu64', '[]', '[]');
+INSERT INTO T_Users ( Login, Password, Basket, Orders ) VALUES ('julie@gmail.com', 'joliejulie40', '[]', '[]');
 
 select * from t_users;
 
-CREATE
-TABLE T_Orders (
+CREATE TABLE T_Orders (
 IdOrder int(4) PRIMARY KEY AUTO_INCREMENT,
 Date date NOT NULL,
-TotalAmount double(10) NOT NULL,
-UserId int(4) NOT NULL,
-ListArticles varchar(1000) NOT NULL
+TotalAmount float(8) NOT NULL,
+IdUser int(4) NOT NULL,
+ListArticles varchar(20000) NOT NULL
 ) ENGINE = InnoDB;

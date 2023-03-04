@@ -5,6 +5,7 @@ public class Article {
 	private String description;
 	private String brand;
 	private double unitaryPrice;
+	private String catName;
 
 	public Article(int id, String description, String brand, double unitaryPrice) {
 		this.id = id;
@@ -17,6 +18,14 @@ public class Article {
 		this.description = description;
 		this.brand = brand;
 		this.unitaryPrice = unitaryPrice;
+	}
+
+	public Article(int id, String description, String brand, double unitaryPrice, String catName) {
+		this.id = id;
+		this.description = description;
+		this.brand = brand;
+		this.unitaryPrice = unitaryPrice;
+		this.catName = catName;
 	}
 
 	public int getId() {
@@ -49,6 +58,14 @@ public class Article {
 
 	public void setUnitaryPrice(double unitaryPrice) {
 		this.unitaryPrice = unitaryPrice;
+	}
+
+	public String getCatName() {
+		return catName;
+	}
+
+	public void setCatName(String catName) {
+		this.catName = catName;
 	}
 
 

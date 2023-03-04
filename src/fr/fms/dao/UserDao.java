@@ -94,7 +94,7 @@ private Connection connection;
 					String rsLogin = resultSet.getString(2);
 					String rsPassword = resultSet.getString(3);
 					String rsBasket = resultSet.getString(4);
-					String rsOrders = resultSet.getString(4);
+					String rsOrders = resultSet.getString(5);
 					
 					ArrayList<Integer> listBasket = new ArrayList<>();
 				    if (rsBasket.length() > 2) {
@@ -164,7 +164,7 @@ private Connection connection;
 					String rsLogin = resultSet.getString(2);
 					String rsPassword = resultSet.getString(3);
 					String rsBasket = resultSet.getString(4);
-					String rsOrders = resultSet.getString(4);
+					String rsOrders = resultSet.getString(5);
 					
 					ArrayList<Integer> listBasket = new ArrayList<>();
 				    if (rsBasket.length() > 2) {

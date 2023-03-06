@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import fr.fms.Entities.User;
 import fr.fms.authentication.BddConnection;
@@ -54,13 +55,17 @@ private Connection connection;
 					String rsLogin = resultSet.getString(2);
 					String rsPassword = resultSet.getString(3);
 					String rsBasket = resultSet.getString(4);
-					String rsOrders = resultSet.getString(4);
-					ArrayList<Integer> listBasket = new ArrayList<>();
+					String rsOrders = resultSet.getString(5);
+					
+					HashMap<Integer, Integer> listBasket = new HashMap<>();
+					
 				    if (rsBasket.length() > 2) {
 				    	rsBasket = rsBasket.substring(1, rsBasket.length() - 1).replace(" ", "");
-				       String[] strArr = rsBasket.split(",");
-				       for (String str : strArr)
-				    	   listBasket.add(Integer.parseInt(str));
+				       String[] hashmapArray = rsBasket.split(",");
+				       for (String str : hashmapArray) {
+				    	   String[] keyvalueArr = str.split("=");
+				    	   listBasket.merge(Integer.parseInt(keyvalueArr[0]), Integer.parseInt(keyvalueArr[1]), Integer::sum);
+				       }
 				    }
 				    
 				    ArrayList<Integer> listOrders = new ArrayList<>();
@@ -96,12 +101,14 @@ private Connection connection;
 					String rsBasket = resultSet.getString(4);
 					String rsOrders = resultSet.getString(5);
 					
-					ArrayList<Integer> listBasket = new ArrayList<>();
+					HashMap<Integer, Integer> listBasket = new HashMap<>();
 				    if (rsBasket.length() > 2) {
 				    	rsBasket = rsBasket.substring(1, rsBasket.length() - 1).replace(" ", "");
 				       String[] strArr = rsBasket.split(",");
-				       for (String str : strArr)
-				    	   listBasket.add(Integer.parseInt(str));
+				       for (String str : strArr) {
+				    	   String[] keyvalueArr = str.split("=");				    	   
+				    	   listBasket.merge(Integer.parseInt(keyvalueArr[0]), 1, Integer::sum);
+				       }
 				    }
 				    
 				    ArrayList<Integer> listOrders = new ArrayList<>();
@@ -166,12 +173,14 @@ private Connection connection;
 					String rsBasket = resultSet.getString(4);
 					String rsOrders = resultSet.getString(5);
 					
-					ArrayList<Integer> listBasket = new ArrayList<>();
+					HashMap<Integer, Integer> listBasket = new HashMap<>();
 				    if (rsBasket.length() > 2) {
 				    	rsBasket = rsBasket.substring(1, rsBasket.length() - 1).replace(" ", "");
 				       String[] strArr = rsBasket.split(",");
-				       for (String str : strArr)
-				    	   listBasket.add(Integer.parseInt(str));
+				       for (String str : strArr) {
+				    	   String[] keyvalueArr = str.split("=");
+				    	   listBasket.merge(Integer.parseInt(keyvalueArr[0]), 1, Integer::sum);
+				       }
 				    }
 				    
 				    ArrayList<Integer> listOrders = new ArrayList<>();

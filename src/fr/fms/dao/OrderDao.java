@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import fr.fms.Entities.Order;
-import fr.fms.Entities.User;
 import fr.fms.authentication.BddConnection;
 
 public class OrderDao implements Dao<Order> {
@@ -78,13 +78,15 @@ private Connection connection;
 					int rsIdUser = resultSet.getInt(4);
 					String rsListArticles = resultSet.getString(5);
 					
-				    
-				    ArrayList<Integer> listArticles = new ArrayList<>();
+					HashMap<Integer, Integer> listArticles = new HashMap<>();
+				   
 				    if (rsListArticles.length() > 2) {
 				    	rsListArticles = rsListArticles.substring(1, rsListArticles.length() - 1).replace(" ", "");
 				       String[] strArr = rsListArticles.split(",");
-				       for (String str : strArr)
-				    	   listArticles.add(Integer.parseInt(str));
+				       for (String str : strArr) {
+				    	   String[] keyvalueArr = str.split("=");				    	   
+				    	   listArticles.merge(Integer.parseInt(keyvalueArr[0]), Integer.parseInt(keyvalueArr[1]), Integer::sum);
+				       }
 				    }
 				    
 					orders.add((new Order(rsIdOrder,rsDate,rsTotalAmount, rsIdUser, listArticles)));
@@ -110,12 +112,15 @@ private Connection connection;
 					String rsListArticles = resultSet.getString(5);
 					
 				    
-				    ArrayList<Integer> listArticles = new ArrayList<>();
+					HashMap<Integer, Integer> listArticles = new HashMap<>();
+					   
 				    if (rsListArticles.length() > 2) {
 				    	rsListArticles = rsListArticles.substring(1, rsListArticles.length() - 1).replace(" ", "");
 				       String[] strArr = rsListArticles.split(",");
-				       for (String str : strArr)
-				    	   listArticles.add(Integer.parseInt(str));
+				       for (String str : strArr) {
+				    	   String[] keyvalueArr = str.split("=");				    	   
+				    	   listArticles.merge(Integer.parseInt(keyvalueArr[0]), Integer.parseInt(keyvalueArr[1]), Integer::sum);
+				       }
 				    }
 				    
 					orders.add((new Order(rsIdOrder,rsDate,rsTotalAmount, rsIdUser, listArticles)));

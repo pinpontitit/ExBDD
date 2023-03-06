@@ -92,8 +92,8 @@ CREATE TABLE T_Users (
 IdUser int(4) PRIMARY KEY AUTO_INCREMENT,
 Login varchar(20) NOT NULL,
 Password varchar(20) NOT NULL,
-Basket varchar(20000) NOT NULL,
-Orders varchar(20000) NOT NULL
+Basket text NOT NULL,
+Orders text NOT NULL
 ) ENGINE = InnoDB;
 
 DESCRIBE T_Users;
@@ -110,5 +110,5 @@ IdOrder int(4) PRIMARY KEY AUTO_INCREMENT,
 Date date NOT NULL,
 TotalAmount float(8) NOT NULL,
 IdUser int(4) NOT NULL,
-ListArticles varchar(20000) NOT NULL
+ListArticles text NOT NULL
 ) ENGINE = InnoDB;

@@ -39,30 +39,7 @@ public class ArticleDao implements Dao<Article> {
 		return 0;
 	}
 
-	@Override
-	public Article read(int id) {
-		Article queryResult=null;
-		String strReadOne = "select IdArticle, t_articles.Description,Brand,UnitaryPrice, catname  from t_articles inner join t_categories on t_articles.idcategory=t_categories.idcategory where IdArticle=?;";
-
-		try (PreparedStatement ps = connection.prepareStatement(strReadOne)){
-			ps.setInt(1, id);
-			try(ResultSet resultSet = ps.executeQuery()) {
-				if(resultSet.next()) {
-					int rsIdArticle = resultSet.getInt(1); 
-					String rsDescription = resultSet.getString(2);
-					String rsBrand = resultSet.getString(3);
-					double rsPrice = resultSet.getDouble(4);
-					String rsCatName = resultSet.getString(5);
-					
-					queryResult = new Article(rsIdArticle,rsDescription,rsBrand,rsPrice, rsCatName);
-				} else {throw new RuntimeException("Erreur:Aucun article avec cet ID dans notre boutique.");}
-			}
-
-		} catch(Exception e) {
-			throw new RuntimeException("Erreur lors de la récupération de l'article:\n" + e.getMessage());
-		}
-		return queryResult;
-	}
+	
 
 	@Override
 	public boolean update(Article obj) {
@@ -92,11 +69,71 @@ public class ArticleDao implements Dao<Article> {
 		}
 		return false;
 	}
+	
+	@Override
+	public Article read(int id) {
+		Article queryResult=null;
+		String strReadOne = "select IdArticle, t_articles.Description,Brand,UnitaryPrice, catname  from t_articles inner join t_categories on t_articles.idcategory=t_categories.idcategory where IdArticle=?;";
+
+		try (PreparedStatement ps = connection.prepareStatement(strReadOne)){
+			ps.setInt(1, id);
+			try(ResultSet resultSet = ps.executeQuery()) {
+				if(resultSet.next()) {
+					int rsIdArticle = resultSet.getInt(1); 
+					String rsDescription = resultSet.getString(2);
+					String rsBrand = resultSet.getString(3);
+					double rsPrice = resultSet.getDouble(4);
+					String rsCatName = resultSet.getString(5);
+					
+					queryResult = new Article(rsIdArticle,rsDescription,rsBrand,rsPrice,rsCatName);
+				} else {throw new RuntimeException("Erreur:Aucun article avec cet ID dans notre boutique.");}
+			}
+
+		} catch(Exception e) {
+			throw new RuntimeException("Erreur lors de la récupération de l'article:\n" + e.getMessage());
+		}
+		return queryResult;
+	}
 
 	@Override
 	public ArrayList<Article> readAll() {
 		ArrayList<Article> articles = new ArrayList<>();
-		String strSql = "SELECT * FROM T_Articles";
+		String strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice,catname  from t_articles inner join t_categories on t_articles.idcategory=t_categories.idcategory";
+
+		try(Statement statement = connection.createStatement ()){
+			try(ResultSet resultSet = statement.executeQuery(strSql)) {
+				while(resultSet.next()) {
+					int rsIdArticle = resultSet.getInt(1); 
+					String rsDescription = resultSet.getString(2);
+					String rsBrand = resultSet.getString(3);
+					double rsPrice = resultSet.getDouble(4);
+					String rsCatName = resultSet.getString(5);
+//					int rsIdCategory = resultSet.getInt(6);
+					
+					articles.add((new Article(rsIdArticle,rsDescription,rsBrand,rsPrice,rsCatName)));
+				}
+			}
+
+
+		} catch(SQLException e) {
+			throw new RuntimeException("Erreur lors de la récupération de l'ensemble des articles:\n" + e.getMessage());
+		}
+		return articles;
+	}
+	
+	public ArrayList<Article> readAll(String order) {
+		ArrayList<Article> articles = new ArrayList<>();
+		String strSql;
+		if (order.equals("prix croissants")) {
+			strSql = "SELECT * FROM T_Articles ORDER BY UnitaryPrice";
+		} else if (order.equals("prix décroissants")) {
+			strSql = "SELECT * FROM T_Articles ORDER BY UnitaryPrice desc";
+		} else if (order.equals("ordre alphabétique")) {
+			strSql = "SELECT * FROM T_Articles order by Description";
+		} else { //the default sorting (could be by newest articles first, or by popularity...)
+			strSql = "SELECT * FROM T_Articles order by IdArticle desc";
+		}
+		
 
 		try(Statement statement = connection.createStatement ()){
 			try(ResultSet resultSet = statement.executeQuery(strSql)) {
@@ -117,19 +154,19 @@ public class ArticleDao implements Dao<Article> {
 		return articles;
 	}
 	
-	public ArrayList<Article> readAll(String order) {
+	public ArrayList<Article> readAll(int idCategory, String order) {
 		ArrayList<Article> articles = new ArrayList<>();
-		String strSql;
-		if (order.equals("priceUp")) {
-			strSql = "SELECT * FROM T_Articles ORDER BY UnitaryPrice";
-		} else if (order.equals("priceDown")) {
-			strSql = "SELECT * FROM T_Articles ORDER BY UnitaryPrice desc";
-		} else if (order.equals("alphabetical")) {
-			strSql = "SELECT * FROM T_Articles order by Description";
-		} else { //the default sorting (could be by newest articles first, or by popularity...)
-			strSql = "SELECT * FROM T_Articles";
-		}
 		
+		String strSql;
+		if (order.equals("prix croissants")) {
+			strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice from t_articles where idCategory=" + idCategory + " order by UnitaryPrice;";
+		} else if (order.equals("prix décroissants")) {
+			strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice from t_articles where idCategory=" + idCategory + " order by UnitaryPrice desc;";
+		} else if (order.equals("ordre alphabétique")) {
+			strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice from t_articles where idCategory=" + idCategory + " order by Description;";
+		} else { //the default sorting (could be by newest articles first, or by popularity...)
+			strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice from t_articles where idCategory=" + idCategory + " order by IdArticle desc;";
+		}
 
 		try(Statement statement = connection.createStatement ()){
 			try(ResultSet resultSet = statement.executeQuery(strSql)) {
@@ -138,14 +175,14 @@ public class ArticleDao implements Dao<Article> {
 					String rsDescription = resultSet.getString(2);
 					String rsBrand = resultSet.getString(3);
 					double rsPrice = resultSet.getDouble(4);
-
+					
 					articles.add((new Article(rsIdArticle,rsDescription,rsBrand,rsPrice)));
 				}
 			}
 
 
 		} catch(SQLException e) {
-			throw new RuntimeException("Erreur lors de la récupération de l'ensemble des articles:\n" + e.getMessage());
+			throw new RuntimeException("Erreur lors de la récupération des articles de cette catégorie:\n" + e.getMessage());
 		}
 		return articles;
 	}

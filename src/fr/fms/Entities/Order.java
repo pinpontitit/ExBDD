@@ -1,16 +1,16 @@
 package fr.fms.Entities;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Order {
 	private int orderId;
 	private Date orderDate;
 	private double totalAmount;
 	private int userId;
-	private ArrayList<Integer> listArticles;
+	private HashMap<Integer, Integer> listArticles;
 
-	public Order(int orderId, Date orderDate, double totalAmount, int userId, ArrayList<Integer> listArticles) {
+	public Order(int orderId, Date orderDate, double totalAmount, int userId, HashMap<Integer, Integer> listArticles) {
 		this.orderId = orderId;
 		this.orderDate = orderDate;
 		this.totalAmount = totalAmount;
@@ -18,7 +18,7 @@ public class Order {
 		this.listArticles = listArticles;
 	}
 	
-	public Order(Date orderDate, double totalAmount, int userId, ArrayList<Integer> listArticles) {
+	public Order(Date orderDate, double totalAmount, int userId, HashMap<Integer, Integer> listArticles) {
 		this.orderDate = orderDate;
 		this.totalAmount = totalAmount;
 		this.userId = userId;
@@ -57,11 +57,11 @@ public class Order {
 		this.userId = userId;
 	}
 
-	public ArrayList<Integer> getListArticles() {
+	public HashMap<Integer, Integer> getListArticles() {
 		return listArticles;
 	}
 
-	public void setListArticles(ArrayList<Integer> listArticles) {
+	public void setListArticles(HashMap<Integer, Integer> listArticles) {
 		this.listArticles = listArticles;
 	}
 

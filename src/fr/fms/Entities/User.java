@@ -1,17 +1,18 @@
 package fr.fms.Entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class User {
 	private int id;
 	private String login;
 	private String password;
-	private ArrayList<Integer> basket;
+	private HashMap<Integer, Integer> basket;
 	private ArrayList<Integer> orderHistory;
 	
 	
-	public User(int id, String login, String password, ArrayList<Integer> basket, ArrayList<Integer> orderHistory) {
+	public User(int id, String login, String password, HashMap<Integer, Integer> basket, ArrayList<Integer> orderHistory) {
 		this.id = id;
 		this.login = login;
 		this.password = password;
@@ -23,7 +24,7 @@ public class User {
 		this.id = id;
 		this.login = login;
 		this.password = password;
-		this.basket = new ArrayList<Integer>();
+		this.basket = new HashMap<Integer, Integer>();
 		this.orderHistory = new ArrayList<Integer>();
 	}
 
@@ -32,7 +33,7 @@ public class User {
 	public User(String login, String password) {
 		this.login = login;
 		this.password = password;
-		this.basket = new ArrayList<Integer>();
+		this.basket = new HashMap<Integer, Integer>();
 		this.orderHistory = new ArrayList<Integer>();
 	}
 
@@ -60,11 +61,11 @@ public class User {
 		this.password = password;
 	}
 
-	public ArrayList<Integer> getBasket() {
+	public HashMap<Integer, Integer> getBasket() {
 		return basket;
 	}
 
-	public void setBasket(ArrayList<Integer> basket) {
+	public void setBasket(HashMap<Integer, Integer> basket) {
 		this.basket = basket;
 	}
 

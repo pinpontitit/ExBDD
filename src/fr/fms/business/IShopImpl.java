@@ -1,17 +1,16 @@
 package fr.fms.business;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
-
+import java.util.HashMap;
 
 import fr.fms.Entities.Article;
+import fr.fms.Entities.Category;
 import fr.fms.Entities.Order;
 import fr.fms.Entities.User;
 import fr.fms.dao.UserDao;
 import fr.fms.dao.ArticleDao;
+import fr.fms.dao.CategoryDao;
 import fr.fms.dao.OrderDao;
 
 public class IShopImpl implements IShop {
@@ -19,33 +18,25 @@ public class IShopImpl implements IShop {
 	private UserDao userDao;
 	private ArticleDao articleDao;
 	private OrderDao orderDao;
+	private CategoryDao categoryDao;
 
 	public IShopImpl() throws Exception {
 		userDao = new UserDao();
 		articleDao = new ArticleDao();
 		orderDao = new OrderDao();
+		categoryDao = new CategoryDao();
 	}
 
 	@Override
 	public User addArticleToBasket(int articleId, User user) {
-		//User tmpUser = new User(user.getId(),user.getLogin(),user.getPassword(),user.getBasket(),user.getOrderHistory()); TODO gérer le cas où ça n'a pas marché
-
-		user.getBasket().add(articleId);
-
+		user.getBasket().merge(articleId, 1, Integer::sum);
 		userDao.update(user);
 		return user;
 	}
 
 	@Override
-	public User removeArticleFromBasket(int articlePosition, User user) {
-		//		Iterator<Integer> new_Iterator = user.getBasket().iterator();
-		//
-		//		while (new_Iterator.hasNext()) {
-		//			if (new_Iterator.next() == articleId)
-		//				 new_Iterator.remove();
-		//		}
-		user.getBasket().remove(articlePosition-1);
-
+	public User removeArticleFromBasket(int articleId, User user) {
+		user.getBasket().remove(articleId);
 		userDao.update(user);
 		return user;
 	}
@@ -53,30 +44,34 @@ public class IShopImpl implements IShop {
 	@Override
 	public User removeAllArticlesFromBasket(User user) {
 		user.getBasket().clear();
-
 		userDao.update(user);
 		return user;
 	}
 
 	@Override
-	public ArrayList<Article> showBasket(int userId) {
-		ArrayList<Integer> userBasketIds = userDao.read(userId).getBasket();
-
-		ArrayList<Article> articles = new ArrayList<>();
-
-		for (int id : userBasketIds) {
-			articles.add(articleDao.read(id));
+	public HashMap<Article, Integer> showBasket(int userId) {
+		HashMap<Integer, Integer> userBasketIds = userDao.read(userId).getBasket();
+ 	   
+		HashMap<Article, Integer> articles = new HashMap<Article, Integer>();
+		for (HashMap.Entry<Integer, Integer> entry : userBasketIds.entrySet()) {
+			articles.put(articleDao.read(entry.getKey()), entry.getValue());
 		}
-
+		
 		return articles;
 	}
 
 	@Override
 	public User order(User user) {
-
-		ArrayList<Double> prices = new ArrayList<>();
-		user.getBasket().stream().forEach(x->prices.add(articleDao.read(x).getUnitaryPrice()));
-		Order order = new Order(new Date(), prices.stream().reduce(0.0, (subtotal, element) -> subtotal + element), user.getId(), user.getBasket());
+//		ArrayList<Double> prices = new ArrayList<>();
+		double totalPrice=0;
+		
+		for (HashMap.Entry<Integer, Integer> entry : user.getBasket().entrySet()) {
+//			prices.add(articleDao.read(entry.getKey()).getUnitaryPrice() * entry.getValue());
+			totalPrice += articleDao.read(entry.getKey()).getUnitaryPrice() * entry.getValue(); 
+		}
+		
+		
+		Order order = new Order(new Date(), totalPrice, user.getId(), user.getBasket());
 		int orderId = orderDao.create(order);
 
 		user.getOrderHistory().add(orderId);
@@ -102,27 +97,9 @@ public class IShopImpl implements IShop {
 		return articleDao.readAll(order);
 	}
 
-//	@Override
-//	public ArrayList<Article> sortAndDisplayAllArticles(String sortChoice) {
-//		ArrayList<Article> articles = articleDao.readAll();
-//
-//		if (sortChoice.equals("alphabetical")) {
-//			Collections.sort(articles, 
-//					(o1, o2) -> o1.getDescription().compareToIgnoreCase(o2.getDescription()));
-//			return articles;
-//		} else if (sortChoice.equals("price")) {
-//			Collections.sort(articles, 
-//					Comparator.comparingDouble(Article::getUnitaryPrice));
-//			return articles;
-//		}
-//		//et tout ce qui est imaginable encore...
-//		return articles;
-//	}
-
 	@Override
-	public ArrayList<Article> displayAllCategories() {
-		return null;
-		//	return categoryDao.readAll();
+	public ArrayList<Category> fetchAllAvailableCategories() {
+		return categoryDao.readAll();	
 	}
 
 	@Override
@@ -157,6 +134,10 @@ public class IShopImpl implements IShop {
 			throw new RuntimeException("Incorrect password");
 
 		else return new User(tmpUser.getId(), tmpUser.getLogin(), tmpUser.getPassword(), tmpUser.getBasket(), tmpUser.getOrderHistory());
+	}
+
+	public ArrayList<Article> displayAllArticlesFromACategory(int idCategory, String order) {
+		return articleDao.readAll(idCategory, order);
 	}
 
 }

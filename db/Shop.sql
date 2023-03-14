@@ -13,7 +13,7 @@ UnitaryPrice float(8) NOT NULL
 
 
 --1.2
-SHOW DATABASES;
+SHOW Tables;
 
 --1.3
 DESCRIBE T_Articles;

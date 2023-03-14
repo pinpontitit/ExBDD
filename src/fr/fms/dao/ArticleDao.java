@@ -57,6 +57,8 @@ public class ArticleDao implements Dao<Article> {
 		return false;
 	}
 
+	
+	
 	@Override
 	public boolean delete(Article obj) {
 		String strDel = "delete from t_articles where IdArticle=?;";
@@ -69,6 +71,8 @@ public class ArticleDao implements Dao<Article> {
 		}
 		return false;
 	}
+	
+	
 	
 	@Override
 	public Article read(int id) {
@@ -86,15 +90,17 @@ public class ArticleDao implements Dao<Article> {
 					String rsCatName = resultSet.getString(5);
 					
 					queryResult = new Article(rsIdArticle,rsDescription,rsBrand,rsPrice,rsCatName);
-				} else {throw new RuntimeException("Erreur:Aucun article avec cet ID dans notre boutique.");}
+				} else {throw new RuntimeException("Erreur: Aucun article avec cet ID dans notre boutique.");}
 			}
 
 		} catch(Exception e) {
-			throw new RuntimeException("Erreur lors de la récupération de l'article:\n" + e.getMessage());
+			throw new RuntimeException(e.getMessage());
 		}
 		return queryResult;
 	}
 
+	
+	
 	@Override
 	public ArrayList<Article> readAll() {
 		ArrayList<Article> articles = new ArrayList<>();
@@ -113,13 +119,13 @@ public class ArticleDao implements Dao<Article> {
 					articles.add((new Article(rsIdArticle,rsDescription,rsBrand,rsPrice,rsCatName)));
 				}
 			}
-
-
 		} catch(SQLException e) {
 			throw new RuntimeException("Erreur lors de la récupération de l'ensemble des articles:\n" + e.getMessage());
 		}
 		return articles;
 	}
+	
+	
 	
 	public ArrayList<Article> readAll(String order) {
 		ArrayList<Article> articles = new ArrayList<>();
@@ -130,7 +136,7 @@ public class ArticleDao implements Dao<Article> {
 			strSql = "SELECT * FROM T_Articles ORDER BY UnitaryPrice desc";
 		} else if (order.equals("ordre alphabétique")) {
 			strSql = "SELECT * FROM T_Articles order by Description";
-		} else { //the default sorting (could be by newest articles first, or by popularity...)
+		} else { //tri par défaut, ça pourrait être par nouveauté ou popularité ou autre
 			strSql = "SELECT * FROM T_Articles order by IdArticle desc";
 		}
 		
@@ -164,7 +170,7 @@ public class ArticleDao implements Dao<Article> {
 			strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice from t_articles where idCategory=" + idCategory + " order by UnitaryPrice desc;";
 		} else if (order.equals("ordre alphabétique")) {
 			strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice from t_articles where idCategory=" + idCategory + " order by Description;";
-		} else { //the default sorting (could be by newest articles first, or by popularity...)
+		} else { //tri par défaut, ça pourrait être par nouveauté ou popularité ou autre
 			strSql = "select IdArticle, t_articles.Description,Brand,UnitaryPrice from t_articles where idCategory=" + idCategory + " order by IdArticle desc;";
 		}
 
@@ -179,7 +185,6 @@ public class ArticleDao implements Dao<Article> {
 					articles.add((new Article(rsIdArticle,rsDescription,rsBrand,rsPrice)));
 				}
 			}
-
 
 		} catch(SQLException e) {
 			throw new RuntimeException("Erreur lors de la récupération des articles de cette catégorie:\n" + e.getMessage());

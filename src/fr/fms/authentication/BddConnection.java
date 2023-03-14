@@ -10,7 +10,6 @@ import java.util.Properties;
 
 public final class BddConnection {
 
-	//	private static BddConnection single_instance = null;
 	private static volatile Connection connection = null;
 
 	private BddConnection() throws IOException {
@@ -34,23 +33,7 @@ public final class BddConnection {
 		}
 	}
 
-	private static Properties readPropertiesFile(String string) throws IOException {
-		Properties prop = null;
-		try (FileInputStream fis = new FileInputStream(string)) {
-			prop = new Properties();
-			prop.load(fis);
-		} catch(FileNotFoundException fnfe) {
-			fnfe.printStackTrace();
-		} catch(IOException ioe) {
-			ioe.printStackTrace();
-		} 
-		return prop;
-	}
-
 	public static Connection getConnection() throws Exception {
-		//		if (single_instance == null)
-		//            single_instance = new BddConnection();
-
 
 		if(connection == null) {
 			new BddConnection();
@@ -63,6 +46,19 @@ public final class BddConnection {
 			connection.close();
 		} catch (Exception e) 
 		{ /* Ignored */ }
+	}
+	
+	private static Properties readPropertiesFile(String string) throws IOException {
+		Properties prop = null;
+		try (FileInputStream fis = new FileInputStream(string)) {
+			prop = new Properties();
+			prop.load(fis);
+		} catch(FileNotFoundException fnfe) {
+			fnfe.printStackTrace();
+		} catch(IOException ioe) {
+			ioe.printStackTrace();
+		} 
+		return prop;
 	}
 
 

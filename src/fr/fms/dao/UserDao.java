@@ -107,7 +107,7 @@ private Connection connection;
 				       String[] strArr = rsBasket.split(",");
 				       for (String str : strArr) {
 				    	   String[] keyvalueArr = str.split("=");				    	   
-				    	   listBasket.merge(Integer.parseInt(keyvalueArr[0]), 1, Integer::sum);
+				    	   listBasket.merge(Integer.parseInt(keyvalueArr[0]), Integer.parseInt(keyvalueArr[1]), Integer::sum);
 				       }
 				    }
 				    
